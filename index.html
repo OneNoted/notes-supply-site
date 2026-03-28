@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="mauve">
+    <head>
+        <title>{app_title}</title>
+        <meta charset="UTF-8">
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="dark">
+        <meta
+            name="description"
+            content="notes.supply — software, systems, and field notes with a terminal-first landing page."
+        >
+        <meta name="author" content="OneNoted">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="notes.supply">
+        <meta
+            property="og:description"
+            content="Software, systems, and field notes with a terminal-first landing page."
+        >
+        <meta property="twitter:card" content="summary">
+        <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script>
+            (function () {
+                try {
+                    var accent = localStorage.getItem("notes-supply-accent");
+                    if (accent) {
+                        document.documentElement.setAttribute("data-accent", accent);
+                    }
+                    if (localStorage.getItem("notes-supply-intro-done")) {
+                        document.documentElement.setAttribute("data-intro-done", "true");
+                    }
+                } catch (_) {}
+            })();
+        </script>
+        <style>
+            :root {
+                color-scheme: dark;
+                background: #0c0c0e;
+                color: #e4e4e8;
+                font-family: "DM Sans", system-ui, sans-serif;
+            }
+
+            html,
+            body,
+            #main {
+                min-height: 100vh;
+                margin: 0;
+                background: inherit;
+                color: inherit;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main"></div>
+    </body>
+</html>
+

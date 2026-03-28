@@ -1,0 +1,12 @@
+{
+  "name": "notes-supply",
+  "private": true,
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i style/input.css -o public/assets/style.css --minify",
+    "watch:css": "npx @tailwindcss/cli -i style/input.css -o public/assets/style.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.13"
+  }
+}
+
