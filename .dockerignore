@@ -1,0 +1,8 @@
+.git
+.github
+.jj
+dist
+node_modules
+output
+target
+.DS_Store
