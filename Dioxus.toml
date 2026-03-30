@@ -1,5 +1,5 @@
 [application]
-name = "notes-supply"
+name = "notes-supply-site"
 default_platform = "web"
 out_dir = "dist"
 public_dir = "public"

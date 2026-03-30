@@ -2,7 +2,12 @@
 use crate::types::{GithubStats, LangStat, ProjectListItem};
 
 #[cfg(not(target_arch = "wasm32"))]
-use axum::{Json, Router, extract::{Path, State}, response::{Html, IntoResponse}, routing::get};
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    response::{Html, IntoResponse},
+    routing::get,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use tower_http::services::{ServeDir, ServeFile};
@@ -12,6 +17,7 @@ pub async fn run() {
     crate::github::warm_cache().await;
     let static_root = static_root();
     let state = AppState { static_root };
+    let bind_addr = bind_addr();
 
     let api = Router::new()
         .route("/stats", get(api_stats))
@@ -43,13 +49,18 @@ pub async fn run() {
         .layer(tower_http::compression::CompressionLayer::new())
         .with_state(state.clone());
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:4000")
+    let listener = tokio::net::TcpListener::bind(&bind_addr)
         .await
         .expect("failed to bind server");
 
-    tracing::info!("notes-supply server listening on http://127.0.0.1:4000");
+    tracing::info!("notes-supply-site server listening on http://{bind_addr}");
     tracing::info!("serving static files from {}", state.static_root);
     axum::serve(listener, app).await.expect("server exited unexpectedly");
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+async fn healthz() -> &'static str {
+    "ok"
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -135,21 +146,29 @@ fn relative_time(iso: &str) -> String {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
+fn bind_addr() -> String {
+    std::env::var("NOTES_SUPPLY_SITE_BIND_ADDR")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| "127.0.0.1:4000".into())
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 fn static_root() -> String {
-    if let Ok(root) = std::env::var("NOTES_SUPPLY_WEB_ROOT") {
+    if let Ok(root) = std::env::var("NOTES_SUPPLY_SITE_WEB_ROOT") {
         return root;
     }
 
     let candidates = [
-        "target/dx/notes-supply/release/web/public",
-        "target/dx/notes-supply/debug/web/public",
+        "target/dx/notes-supply-site/release/web/public",
+        "target/dx/notes-supply-site/debug/web/public",
         "dist",
     ];
 
     candidates
         .into_iter()
         .find(|path| std::path::Path::new(path).exists())
-        .unwrap_or("target/dx/notes-supply/debug/web/public")
+        .unwrap_or("target/dx/notes-supply-site/debug/web/public")
         .to_string()
 }
 

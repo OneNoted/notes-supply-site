@@ -1,5 +1,5 @@
 [package]
-name = "notes-supply"
+name = "notes-supply-site"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
@@ -33,6 +33,6 @@ default = []
 server = []
 
 [[bin]]
-name = "notes-supply-server"
+name = "notes-supply-site-server"
 path = "src/server_main.rs"
 required-features = ["server"]

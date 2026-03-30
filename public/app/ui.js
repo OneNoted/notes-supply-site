@@ -25,9 +25,9 @@
   function setAccent(value) {
     root.setAttribute("data-accent", value);
     try {
-      localStorage.setItem("notes-supply-accent", value);
+      localStorage.setItem("notes-supply-site-accent", value);
     } catch (_error) {}
-    window.dispatchEvent(new CustomEvent("notes-supply:accentchange"));
+    window.dispatchEvent(new CustomEvent("notes-supply-site:accentchange"));
   }
 
   window.notesSupplyUi = {
@@ -36,4 +36,3 @@
     setAccent: setAccent
   };
 })();
-

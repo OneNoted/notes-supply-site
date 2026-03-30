@@ -78,7 +78,7 @@ pub async fn get_languages() -> Vec<(String, f64)> {
 #[cfg(not(target_arch = "wasm32"))]
 pub async fn fetch_readme(slug: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
     let client = reqwest::Client::builder()
-        .user_agent("notes-supply/0.1")
+        .user_agent("notes-supply-site/0.1")
         .build()?;
 
     let url = format!("https://api.github.com/repos/OneNoted/{slug}/readme");
@@ -86,7 +86,7 @@ pub async fn fetch_readme(slug: &str) -> Result<String, Box<dyn std::error::Erro
         .get(&url)
         .header("Accept", "application/vnd.github.raw+json");
 
-    if let Ok(token) = std::env::var("GITHUB_TOKEN") {
+    if let Some(token) = github_token() {
         request = request.bearer_auth(token);
     }
 
@@ -101,13 +101,13 @@ pub async fn fetch_readme(slug: &str) -> Result<String, Box<dyn std::error::Erro
 #[cfg(not(target_arch = "wasm32"))]
 async fn fetch_repos() -> Result<Vec<Project>, reqwest::Error> {
     let client = reqwest::Client::builder()
-        .user_agent("notes-supply/0.1")
+        .user_agent("notes-supply-site/0.1")
         .build()?;
 
     let url = "https://api.github.com/users/OneNoted/repos?per_page=100&sort=updated";
     let mut request = client.get(url);
 
-    if let Ok(token) = std::env::var("GITHUB_TOKEN") {
+    if let Some(token) = github_token() {
         request = request.bearer_auth(token);
     }
 
@@ -133,11 +133,11 @@ async fn fetch_repos() -> Result<Vec<Project>, reqwest::Error> {
 
 #[cfg(not(target_arch = "wasm32"))]
 async fn fetch_languages() -> Result<Vec<(String, f64)>, Box<dyn std::error::Error + Send + Sync>> {
-    let token = std::env::var("GITHUB_TOKEN")
-        .map_err(|_| "GITHUB_TOKEN not set — needed for language stats")?;
+    let token = github_token()
+        .ok_or("GITHUB_TOKEN not set — needed for language stats")?;
 
     let client = reqwest::Client::builder()
-        .user_agent("notes-supply/0.1")
+        .user_agent("notes-supply-site/0.1")
         .build()?;
 
     let projects = PROJECT_CACHE.read().await.clone();
@@ -188,11 +188,11 @@ async fn fetch_languages() -> Result<Vec<(String, f64)>, Box<dyn std::error::Err
 
 #[cfg(not(target_arch = "wasm32"))]
 async fn fetch_contributions() -> Result<u32, Box<dyn std::error::Error + Send + Sync>> {
-    let token = std::env::var("GITHUB_TOKEN")
-        .map_err(|_| "GITHUB_TOKEN not set — needed for contribution count")?;
+    let token = github_token()
+        .ok_or("GITHUB_TOKEN not set — needed for contribution count")?;
 
     let client = reqwest::Client::builder()
-        .user_agent("notes-supply/0.1")
+        .user_agent("notes-supply-site/0.1")
         .build()?;
 
     let query = r#"{"query":"{ user(login: \"OneNoted\") { contributionsCollection { contributionCalendar { totalContributions } } } }"}"#;
@@ -214,6 +214,14 @@ async fn fetch_contributions() -> Result<u32, Box<dyn std::error::Error + Send +
 }
 
 #[cfg(not(target_arch = "wasm32"))]
+fn github_token() -> Option<String> {
+    std::env::var("GITHUB_TOKEN")
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(serde::Deserialize)]
 struct GithubRepo {
     name: String,
@@ -228,4 +236,3 @@ struct GithubRepo {
     fork: bool,
     archived: bool,
 }
-

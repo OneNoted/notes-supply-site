@@ -24,11 +24,11 @@
         <script>
             (function () {
                 try {
-                    var accent = localStorage.getItem("notes-supply-accent");
+                    var accent = localStorage.getItem("notes-supply-site-accent");
                     if (accent) {
                         document.documentElement.setAttribute("data-accent", accent);
                     }
-                    if (localStorage.getItem("notes-supply-intro-done")) {
+                    if (localStorage.getItem("notes-supply-site-intro-done")) {
                         document.documentElement.setAttribute("data-intro-done", "true");
                     }
                 } catch (_) {}
@@ -56,4 +56,3 @@
         <div id="main"></div>
     </body>
 </html>
-

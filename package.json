@@ -1,5 +1,5 @@
 {
-  "name": "notes-supply",
+  "name": "notes-supply-site",
   "private": true,
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i style/input.css -o public/assets/style.css --minify",
@@ -9,4 +9,3 @@
     "@tailwindcss/cli": "^4.1.13"
   }
 }
-

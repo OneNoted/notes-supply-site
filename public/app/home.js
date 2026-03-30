@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_INTRO = "notes-supply-intro-done";
+  const STORAGE_INTRO = "notes-supply-site-intro-done";
   let particlesInitialized = false;
   let terminalInitialized = false;
 
@@ -149,7 +149,7 @@
     draw();
 
     window.addEventListener("resize", resetParticles);
-    window.addEventListener("notes-supply:accentchange", resetParticles);
+    window.addEventListener("notes-supply-site:accentchange", resetParticles);
   }
 
   function initTerminal() {
