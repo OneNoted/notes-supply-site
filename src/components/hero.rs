@@ -18,21 +18,31 @@ pub fn Hero() -> Element {
 
             div { class: "absolute inset-0 radial-atmosphere dot-grid" }
 
-            div { class: "relative z-10 w-full max-w-2xl px-6",
+            div { class: "relative z-10 w-full max-w-2xl mx-auto px-6",
                 div { class: "hero-stage",
                     div { class: "hero-overlay",
                         TerminalIntro {}
                     }
 
                     div { class: "hero-copy text-center",
-                        h1 { class: "hero-content font-display text-6xl md:text-8xl font-extrabold tracking-tight leading-none mb-6",
+                        button {
+                            r#type: "button",
+                            class: "hero-content term-replay font-mono text-base text-text-dim hover:text-text transition-colors duration-fast",
+                            "data-terminal-replay": true,
+                            span { class: "text-accent", "$" }
+                            span { style: "display:inline-block;width:4px" }
+                            "whoami"
+                            span { class: "terminal-cursor" }
+                        }
+
+                        h1 { class: "hero-content font-display text-6xl md:text-8xl font-extrabold tracking-tight leading-none mb-4",
                             "notes"
                         }
 
                         p {
                             class: "hero-content text-sm text-text-dim leading-relaxed max-w-md mx-auto mb-5",
                             style: "font-family: var(--font-mono)",
-                            "software, systems, and field notes."
+                            "building software, systems, and tools."
                             br {}
                             "Biting off more than I can chew since '07."
                         }
@@ -40,7 +50,9 @@ pub fn Hero() -> Element {
                         div {
                             class: "hero-content flex flex-col items-center gap-0.5",
                             style: "font-family: var(--font-mono)",
-                            div { class: "text-[10px] text-text-muted tracking-wide",
+                            a {
+                                href: "https://notes.supply",
+                                class: "block text-[10px] text-text-muted hover:text-accent transition-colors duration-fast tracking-wide",
                                 "notes"
                                 "["
                                 span { style: "color: var(--color-accent)", "dot" }

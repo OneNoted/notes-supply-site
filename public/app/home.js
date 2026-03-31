@@ -1,7 +1,9 @@
 (function () {
   const STORAGE_INTRO = "notes-supply-site-intro-done";
-  let particlesInitialized = false;
-  let terminalInitialized = false;
+  let particlesCanvas = null;
+  let particlesTeardown = null;
+  let terminalWindow = null;
+  let terminalTeardown = null;
 
   function onReady(callback) {
     if (document.readyState === "loading") {
@@ -51,15 +53,15 @@
   }
 
   function initParticles() {
-    if (particlesInitialized) {
+    const canvas = document.querySelector("[data-hero-particles]");
+    if (!canvas || canvas === particlesCanvas) {
       return;
     }
 
-    const canvas = document.querySelector("[data-hero-particles]");
-    if (!canvas) {
-      return;
-    }
-    particlesInitialized = true;
+    if (particlesTeardown) particlesTeardown();
+    particlesCanvas = canvas;
+
+    var alive = true;
 
     const context = canvas.getContext("2d");
     if (!context) {
@@ -99,6 +101,7 @@
     }
 
     function draw() {
+      if (!alive) return;
       const accent = accentColor();
       context.clearRect(0, 0, width, height);
 
@@ -150,15 +153,23 @@
 
     window.addEventListener("resize", resetParticles);
     window.addEventListener("notes-supply-site:accentchange", resetParticles);
+
+    particlesTeardown = function () {
+      alive = false;
+      window.removeEventListener("resize", resetParticles);
+      window.removeEventListener("notes-supply-site:accentchange", resetParticles);
+    };
   }
 
   function initTerminal() {
-    if (terminalInitialized) {
+    const windowEl = document.querySelector("[data-terminal-window]");
+    if (!windowEl || windowEl === terminalWindow) {
       return;
     }
 
+    if (terminalTeardown) terminalTeardown();
+
     const hero = document.getElementById("hero-wrapper");
-    const windowEl = document.querySelector("[data-terminal-window]");
     const bodyEl = document.querySelector("[data-terminal-body]");
     const historyEl = document.querySelector("[data-terminal-history]");
     const inputEl = document.querySelector("[data-terminal-input]");
@@ -171,7 +182,6 @@
 
     if (
       !hero ||
-      !windowEl ||
       !bodyEl ||
       !historyEl ||
       !inputEl ||
@@ -182,7 +192,7 @@
     ) {
       return;
     }
-    terminalInitialized = true;
+    terminalWindow = windowEl;
 
     const state = {
       commandHistory: [],
@@ -421,7 +431,7 @@
       }
 
       if (base === "cd" || base === "z") {
-        const matches = ["projects", "home"].filter(function (option) {
+        const matches = ["projects", "portfolio", "home"].filter(function (option) {
           return !arg || option.startsWith(arg);
         });
         if (matches.length === 1) {
@@ -627,14 +637,16 @@
         pushLine(
           "output",
           '<span style="color:var(--color-text-dim)">usage:</span> cd <span style="color:var(--color-text-dim)">&lt;path&gt;</span>\n' +
-            '<span style="color:var(--color-text-dim)">paths:</span> <span style="color:var(--color-accent)">/</span>  <span style="color:var(--color-accent)">projects</span>  <span style="color:var(--color-accent)">&lt;project-name&gt;</span>'
+            '<span style="color:var(--color-text-dim)">paths:</span> <span style="color:var(--color-accent)">/</span>  <span style="color:var(--color-accent)">projects</span>  <span style="color:var(--color-accent)">portfolio</span>  <span style="color:var(--color-accent)">&lt;project-name&gt;</span>'
         );
         return;
       }
 
-      const clean = arg.trim_start().replace(/^\/+/, "");
+      const clean = arg.trimStart().replace(/^\/+/, "");
       if (!clean || clean === "~" || clean === "home") {
         window.location.href = "/";
+      } else if (clean === "portfolio") {
+        window.location.href = "https://portfolio.notes.supply";
       } else if (clean === "projects") {
         window.location.href = "/projects";
       } else if (clean.startsWith("project/")) {
@@ -817,9 +829,11 @@
     }
 
     function executeCommand(command) {
-      const parts = command.split(/\s+/, 2);
-      const base = parts[0] || "";
-      const arg = parts.length > 1 ? parts[1].trim() : "";
+      clearTimers();
+      hideHint();
+      var parts = command.split(/\s+/, 2);
+      var base = parts[0] || "";
+      var arg = parts.length > 1 ? parts[1].trim() : "";
 
       if (command) {
         state.commandHistory.push(command);
@@ -975,32 +989,21 @@
         pushLine("prompt", introCommand);
       }
       storageSet(STORAGE_INTRO, "true");
-      let finished = false;
-      function finishReveal() {
-        if (finished) {
-          return;
-        }
-        finished = true;
-        windowEl.removeEventListener("transitionend", onTransitionEnd);
-        windowEl.classList.add("hidden");
-        replayEl.classList.remove("hidden");
-        replayEl.classList.add("is-visible");
-        detachKeyHandler();
-      }
-      function onTransitionEnd(event) {
-        if (event.target !== windowEl) {
-          return;
-        }
-        finishReveal();
-      }
-
-      windowEl.addEventListener("transitionend", onTransitionEnd);
-      setHeroRevealed(true);
       state.input = "";
       renderInput();
+      detachKeyHandler();
+
+      // Act 1: Terminal dissolves (0ms)
+      inputLineEl.classList.add("hidden");
+      windowEl.classList.add("term-window-exit");
+
+      // Act 2: Collapse terminal from layout + reveal everything (450ms)
       schedule(function () {
-        finishReveal();
-      }, 520);
+        windowEl.classList.add("hidden");
+        hero.classList.add("has-revealed");
+        hero.setAttribute("data-revealed", "true");
+        document.documentElement.setAttribute("data-intro-done", "true");
+      }, 450);
     }
 
     function resetTerminal() {
@@ -1012,21 +1015,31 @@
       state.input = "";
       state.inputStartedAt = performance.now();
       hideHint();
-      windowEl.classList.remove("hidden", "term-window-exit");
-      replayEl.classList.add("hidden");
-      replayEl.classList.remove("is-visible");
-      setHeroRevealed(false);
-      render();
-      attachKeyHandler();
-      scheduleHint();
+
+      // Fade out hero content and replay first
+      hero.setAttribute("data-revealed", "false");
+      document.documentElement.removeAttribute("data-intro-done");
+
+      // After content fades, bring terminal back
+      schedule(function () {
+        windowEl.classList.remove("hidden", "term-window-exit");
+        inputLineEl.classList.remove("hidden");
+        render();
+        attachKeyHandler();
+        scheduleHint();
+      }, 350);
     }
 
     replayEl.addEventListener("click", resetTerminal);
 
+    terminalTeardown = function () {
+      detachKeyHandler();
+      clearTimers();
+      replayEl.removeEventListener("click", resetTerminal);
+    };
+
     if (storageGet(STORAGE_INTRO)) {
       windowEl.classList.add("hidden");
-      replayEl.classList.remove("hidden");
-      replayEl.classList.add("is-visible");
       setHeroRevealed(true);
       render();
       return;
@@ -1044,23 +1057,16 @@
       }
       initParticles();
       initTerminal();
-      return particlesInitialized && terminalInitialized;
+      return !!particlesCanvas && !!terminalWindow;
     }
 
-    if (tryInit()) {
-      return;
-    }
+    tryInit();
 
-    const observer = new MutationObserver(function () {
-      if (tryInit()) {
-        observer.disconnect();
-      }
+    var observer = new MutationObserver(function () {
+      tryInit();
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-    window.setTimeout(function () {
-      observer.disconnect();
-    }, 10000);
   }
 
   onReady(function () {

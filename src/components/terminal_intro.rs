@@ -22,15 +22,6 @@ pub fn TerminalIntro() -> Element {
                 }
             }
 
-            button {
-                r#type: "button",
-                class: "term-replay hidden font-mono text-base text-text-dim hover:text-text transition-colors duration-fast",
-                "data-terminal-replay": true,
-                span { class: "text-accent", "$" }
-                span { style: "display:inline-block;width:4px" }
-                "whoami"
-                span { class: "terminal-cursor" }
-            }
         }
     }
 }
