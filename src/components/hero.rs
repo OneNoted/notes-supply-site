@@ -28,6 +28,7 @@ pub fn Hero() -> Element {
                         button {
                             r#type: "button",
                             class: "hero-content term-replay font-mono text-base text-text-dim hover:text-text transition-colors duration-fast",
+                            style: "--hero-reveal-delay: 0.12s",
                             "data-terminal-replay": true,
                             span { class: "text-accent", "$" }
                             span { style: "display:inline-block;width:4px" }
@@ -35,13 +36,14 @@ pub fn Hero() -> Element {
                             span { class: "terminal-cursor" }
                         }
 
-                        h1 { class: "hero-content font-display text-6xl md:text-8xl font-extrabold tracking-tight leading-none mb-4",
+                        h1 { class: "hero-content hero-title font-display text-6xl md:text-8xl font-extrabold tracking-tight leading-none mb-4",
+                            style: "--hero-reveal-delay: 0s",
                             "notes"
                         }
 
                         p {
                             class: "hero-content text-sm text-text-dim leading-relaxed max-w-md mx-auto mb-5",
-                            style: "font-family: var(--font-mono)",
+                            style: "--hero-reveal-delay: 0.28s; font-family: var(--font-mono)",
                             "building software, systems, and tools."
                             br {}
                             "Biting off more than I can chew since '07."
@@ -49,9 +51,9 @@ pub fn Hero() -> Element {
 
                         div {
                             class: "hero-content flex flex-col items-center gap-0.5",
-                            style: "font-family: var(--font-mono)",
+                            style: "--hero-reveal-delay: 0.5s; font-family: var(--font-mono)",
                             a {
-                                href: "https://notes.supply",
+                                href: "/",
                                 class: "block text-[10px] text-text-muted hover:text-accent transition-colors duration-fast tracking-wide",
                                 "notes"
                                 "["
@@ -82,6 +84,7 @@ pub fn Hero() -> Element {
             a {
                 href: "#site-footer",
                 class: "hero-content scroll-hint absolute bottom-10 left-1/2 -translate-x-1/2 z-10",
+                style: "--hero-reveal-delay: 0.62s",
                 span { class: "scroll-pill" }
             }
         }

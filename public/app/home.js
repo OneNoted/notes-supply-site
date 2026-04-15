@@ -842,6 +842,9 @@
 
       if (!command) {
         pushLine("prompt", "");
+        if (!storageGet(STORAGE_INTRO)) {
+          scheduleHint();
+        }
       } else if (base === "whoami") {
         revealFromWhoami(false);
       } else if (["fetch", "neofetch", "fastfetch", "onefetch"].includes(base)) {
@@ -1001,8 +1004,7 @@
       schedule(function () {
         windowEl.classList.add("hidden");
         hero.classList.add("has-revealed");
-        hero.setAttribute("data-revealed", "true");
-        document.documentElement.setAttribute("data-intro-done", "true");
+        setHeroRevealed(true);
       }, 450);
     }
 
@@ -1040,6 +1042,7 @@
 
     if (storageGet(STORAGE_INTRO)) {
       windowEl.classList.add("hidden");
+      hero.classList.add("has-revealed");
       setHeroRevealed(true);
       render();
       return;

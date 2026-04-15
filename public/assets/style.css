@@ -1734,11 +1734,12 @@
 [data-revealed="false"].has-revealed .hero-content {
   transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1), transform 0.3s cubic-bezier(0.4, 0, 1, 1);
 }
-[data-revealed="true"] .hero-content:first-of-type {
+[data-revealed="true"] .hero-title {
   opacity: 1;
   transform: translateY(0) scale(1);
   pointer-events: auto;
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--hero-reveal-delay, 0s);
   will-change: auto;
 }
 [data-revealed="true"] .hero-content {
@@ -1746,19 +1747,8 @@
   transform: translateY(0) scale(1);
   pointer-events: auto;
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--hero-reveal-delay, 0s);
   will-change: auto;
-}
-[data-revealed="true"] .hero-content:nth-of-type(1) {
-  transition-delay: 0s;
-}
-[data-revealed="true"] .hero-content:nth-of-type(2) {
-  transition-delay: 0.12s;
-}
-[data-revealed="true"] .hero-content:nth-of-type(3) {
-  transition-delay: 0.28s;
-}
-[data-revealed="true"] .hero-content:nth-of-type(4) {
-  transition-delay: 0.5s;
 }
 html.js .reveal {
   opacity: 0;
