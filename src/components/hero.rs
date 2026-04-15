@@ -53,7 +53,7 @@ pub fn Hero() -> Element {
                             class: "hero-content flex flex-col items-center gap-0.5",
                             style: "--hero-reveal-delay: 0.5s; font-family: var(--font-mono)",
                             a {
-                                href: "https://notes.supply",
+                                href: "/",
                                 class: "block text-[10px] text-text-muted hover:text-accent transition-colors duration-fast tracking-wide",
                                 "notes"
                                 "["
