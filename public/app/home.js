@@ -842,6 +842,9 @@
 
       if (!command) {
         pushLine("prompt", "");
+        if (!storageGet(STORAGE_INTRO)) {
+          scheduleHint();
+        }
       } else if (base === "whoami") {
         revealFromWhoami(false);
       } else if (["fetch", "neofetch", "fastfetch", "onefetch"].includes(base)) {
