@@ -5,7 +5,7 @@ pub fn Footer() -> Element {
     rsx! {
         footer { id: "site-footer", class: "border-t border-border py-12 px-6",
             div { class: "max-w-4xl mx-auto flex items-center justify-between text-[11px] font-mono text-text-muted",
-                span { "notes.supply // 2026" }
+                span { "notes.supply // © 2026 Notes Supply AB" }
                 div { class: "flex items-center gap-4",
                     a {
                         href: "https://github.com/OneNoted",
@@ -19,4 +19,3 @@ pub fn Footer() -> Element {
         }
     }
 }
-
